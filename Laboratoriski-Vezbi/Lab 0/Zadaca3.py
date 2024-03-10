@@ -41,6 +41,19 @@ class Game:
             moves.append((x, y + 1))
         return moves
 
+    def possible_random_moves(self, player):
+        moves = []
+        x, y = player.x_pos, player.y_pos
+        if x > 0:
+            moves.append((x - 1, y))
+        if x < self.width - 1:
+            moves.append((x + 1, y))
+        if y > 0:
+            moves.append((x, y - 1))
+        if y < self.height - 1:
+            moves.append((x, y + 1))
+        return moves
+
 
 class Pacman:
     def __init__(self, width, height, matrix):
@@ -55,15 +68,27 @@ class Pacman:
         new_array[row_index][column_index] = new_value
         return new_array
 
+    def place_player(self, position):
+        row_index = position[0]
+        column_index = position[1]
+        new_value = "P"
+        new_array = [row[:] for row in self.game.matrix]
+        new_array[row_index][column_index] = new_value
+        return new_array
+
     def play_game(self):
         while self.game.has_points_left():
             moves = self.game.possible_moves(self.player)
             if moves:
                 next_move = random.choice(moves)
             else:
-                next_move = (random.randint(0, self.game.width - 1), random.randint(0, self.game.height - 1))
+                moves = self.game.possible_random_moves(self.player)
+                next_move = random.choice(moves)
             self.game.matrix = self.eat_item(next_move)
             self.player.move(next_move)
+        # self.game.matrix = self.place_player(next_move)
+        # for row in self.game.matrix:
+        #   print(row)
 
 
 if __name__ == "__main__":
